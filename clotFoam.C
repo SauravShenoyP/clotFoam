@@ -25,7 +25,7 @@ Application
     clotFoam
 
 Description
-    Simulate thrombosis as described by the model of Taylor et al. 
+    Simulate thrombosis as described by the model of Taylor et al. For full theoretical detail, please refer to https://doi.org/10.1007/s10237-016-0793-2
 
 \*---------------------------------------------------------------------------*/
 
@@ -51,126 +51,6 @@ int main(int argc, char *argv[])
 
     turbulence->validate();
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    
-    //Declaring fields for use in loops
-    
-    volScalarField A_C
-    (
-        IOobject
-        (
-            "A_C",
-            runTime.timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("A_C", dimensionSet(0,0,-1,0,0,0,0), 0.0)
-    );
-    
-    volScalarField A_M
-    (
-        IOobject
-        (
-            "A_M",
-            runTime.timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("A_M", dimensionSet(0,0,-1,0,0,0,0), 0.0)
-    );
-    
-    volScalarField phi_f
-    (
-        IOobject
-        (
-            "phi_f",
-            runTime.timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("phi_f", dimensionSet(0,0,0,0,0,0,0), 0.0)
-    );
-    
-    volScalarField tau
-    (
-        IOobject
-        (
-            "tau",
-            runTime.timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("tau", dimensionSet(1,-1,-2,0,0,0,0), 0.0)
-    );
-    
-    volScalarField P_TSP
-    (
-        IOobject
-        (
-            "P_TSP",
-	    runTime.timeName(),
-	    mesh,
-	    IOobject::NO_READ,
-	    IOobject::AUTO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("P_TSP", dimensionSet(0,0,0,0,0,0,0), 0.0)
-    );
-
-volScalarField beta_eps
-(
-    IOobject
-    (
-        "beta_eps",
-	runTime.timeName(),
-	mesh,
-	IOobject::NO_READ,
-	IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("beta_eps", dimensionSet(0,0,-1,0,0,0,0), 0.0)
-);
-
-Info<< "Calculating wall shear stress\n" << endl;
-
-volScalarField WSS
-(
-    IOobject
-    (
-        "WSS",
-	runTime.timeName(),
-	mesh,
-	IOobject::NO_READ,
-	IOobject::AUTO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("WSS", dimensionSet(1,-1,-2,0,0,0,0), 0.0)
-);
-
-volScalarField check
-(
-    IOobject
-    (
-        "check",
-	runTime.timeName(),
-	mesh,
-	IOobject::NO_READ,
-	IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("check", dimensionSet(0,0,0,0,0,0,0), 0.0)
-);
-    
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //    
-    
     Info<< "\nStarting time loop\n" << endl;
 
     while (runTime.loop())

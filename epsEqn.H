@@ -1,9 +1,20 @@
+/******************************************************************************
+The evolution of aggregation intensity over time is solved. 
 
-WSS = nu*rho*mag(fvc::grad(U));
+The wall shear stress is treated separately at the physical walls and at the 
+thrombus-fluid interface. This is to distinguish between the processes of 
+thrombus deposition and thrombus growth.
+******************************************************************************/
 
-//Coefficient function calculation at walls
+WSS = nu*rho*mag(fvc::grad(U));    //Wall shear stress in interior computational cells
 
-const fvPatchList& patches = mesh.boundary();
+/******************************************************************************
+WSS calculation at the wall. The surface normal velocity gradient is employed.
+The following block of code cycles through all cells that have a face on the 
+boundary of the domain.
+******************************************************************************/
+
+const fvPatchList& patches = mesh.boundary(); 
 
 forAll(patches, patchI)
 {
@@ -29,6 +40,7 @@ forAll(patches, patchI)
                 P_TSP[faceCellI] = 1.0 - P_TSP[faceCellI];
             }
                
+            //Breakdown
             if (WSS[faceCellI] >= tau_bd_wall.value())
             {
                 beta_eps[faceCellI] = B.value();
@@ -41,13 +53,13 @@ forAll(patches, patchI)
     }
 }
 
-Info<< "Calculating surface shear stress\n" << endl;
+/******************************************************************************
+The following block of code calculates the probability of thrombosis within/on
+the surface of the thrombus. 
+******************************************************************************/
 
 forAll(epsilon, cellI)
-{
-    
-    //TSP calculation for within/at the surface of the thrombus
-    
+{ 
     if (check[cellI] == 1.0)
         continue;
     
@@ -94,8 +106,7 @@ forAll(epsilon, cellI)
         }
     }
     
-    //Breakdown
-    
+    //Breakdown    
     if (WSS[cellI] >= tau_bd_thr.value())
     {
         beta_eps[cellI] = B.value();
@@ -106,12 +117,12 @@ forAll(epsilon, cellI)
     }
 }
 
-//Solve
+/******************************************************************************
+Solve the epsilon equation
+******************************************************************************/
 
 Info<< "Solving epsilon equation\n" << endl;
-
 solve(fvm::ddt(epsilon) == alpha_eps*P_TSP*(phi_a*phi_a) - fvm::Sp(beta_eps, epsilon));
-
 Info<< "Max/min epsilon: " << max(epsilon).value() << "/" << min(epsilon).value() << nl << endl;
 
 
