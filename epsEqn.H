@@ -1,5 +1,6 @@
 /******************************************************************************
-The evolution of aggregation intensity over time is solved. 
+The evolution of aggregation intensity over time is solved. epsilon is coupled 
+to the flow equations as an implicit source term defined using fvOptions.
 
 The wall shear stress is treated separately at the physical walls and at the 
 thrombus-fluid interface. This is to distinguish between the processes of 
