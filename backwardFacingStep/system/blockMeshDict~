@@ -1,0 +1,107 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.4.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1e-03;
+
+initialHeight 7.5;
+stepHeight 2.5;
+lengthA 10;
+lengthB 50;
+
+vertices
+(
+    ($lengthA 0 0) //0
+    (#calc "$lengthA + $lengthB" 0 0) //1
+    (0 $stepHeight 0) //2
+    ($lengthA $stepHeight 0) //3 
+    (#calc "$lengthA + $lengthB" $stepHeight 0) //4
+    (0 #calc "$initialHeight + $stepHeight" 0) //5 
+    ($lengthA  #calc "$initialHeight + $stepHeight" 0) //6
+    (#calc "$lengthA + $lengthB"  #calc "$initialHeight + $stepHeight" 0) //7
+
+    ($lengthA 0 1) //8
+    (#calc "$lengthA + $lengthB" 0 1) //9
+    (0 $stepHeight 1) //10
+    ($lengthA $stepHeight 1) //11 
+    (#calc "$lengthA + $lengthB" $stepHeight 1) //12
+    (0 #calc "$initialHeight + $stepHeight" 1) //13
+    ($lengthA  #calc "$initialHeight + $stepHeight" 1) //14
+    (#calc "$lengthA + $lengthB"  #calc "$initialHeight + $stepHeight" 1) //15
+);
+
+blocks
+(
+    hex (0 1 4 3 8 9 12 11) (200 40 1) simpleGrading (1 1 1) //0
+    hex (2 3 6 5 10 11 14 13) (40 40 1) simpleGrading (1 1 1) //1
+    hex (3 4 7 6 11 12 15 14) (200 40 1) simpleGrading (1 1 1) //2
+);
+
+edges
+(
+);
+
+boundary
+(
+    walls
+    {
+        type wall;
+        faces
+        (
+            (6 5 13 14) // gora 0
+            (7 6 14 15) // gora 1
+            (2 3 11 10) // dol 0
+            (0 1 9 8) // dol 1
+            (3 0 8 11) // dol pion
+        );
+    }
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (5 2 10 13) 
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (4 7 15 12)
+            (1 4 12 9)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+            (3 2 5 6)
+            (4 3 6 7)
+            (1 0 3 4)
+
+            (11 14 13 10)
+            (12 15 14 11)
+            (9 12 11 8)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //
